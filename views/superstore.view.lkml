@@ -137,6 +137,57 @@ view: superstore {
     type: number
     sql: ${TABLE}.Year_Birth ;;
   }
+  measure: web_visits_month {
+    type: sum
+    sql: ${TABLE}.NumWebVisitsMonth ;;
+  }
+  measure: web_purchases {
+    type: sum
+    sql: ${TABLE}.NumWebPurchases ;;
+  }
+  measure: store_purchases {
+    type: sum
+    sql: ${TABLE}.NumStorePurchases ;;
+  }
+  measure: catalog_purchases {
+    type: sum
+    sql: ${TABLE}.NumCatalogPurchases ;;
+  }
+
+  measure: deals_purchases {
+    type: sum
+    sql: ${TABLE}.NumDealsPurchases ;;
+  }
+ measure: fish_products {
+    type: sum
+    sql: ${TABLE}.MntFishProducts ;;
+  }
+
+  measure: fruits {
+    type: sum
+    sql: ${TABLE}.MntFruits ;;
+  }
+
+  measure: gold_prods {
+    type: sum
+    sql: ${TABLE}.MntGoldProds ;;
+  }
+
+  measure: meat_products {
+    type: sum
+    sql: ${TABLE}.MntMeatProducts ;;
+  }
+
+  measure: sweet_products {
+    type: sum
+    sql: ${TABLE}.MntSweetProducts ;;
+  }
+
+  measure: wines {
+    type: sum
+    sql: ${TABLE}.MntWines ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [id]
