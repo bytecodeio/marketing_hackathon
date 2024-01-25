@@ -161,7 +161,7 @@ view: superstore {
 
   measure: total_purchases {
     type: sum
-    sql: ${TABLE}.NumDealsPurchases + ${TABLE}.NumCatalogPurchases+${TABLE}.NumStorePurchases+${TABLE}.NumWebPurchases
+    sql: (${TABLE}.NumDealsPurchases + ${TABLE}.NumCatalogPurchases+${TABLE}.NumStorePurchases+${TABLE}.NumWebPurchases)
   }
  measure: fish_products {
     type: sum
