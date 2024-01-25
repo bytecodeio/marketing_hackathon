@@ -178,7 +178,6 @@ view: superstore {
     sql: ${TABLE}.Teenhome ;;
   }
 
-
   ## Measures ##
 
   measure: catalog_purchases {
