@@ -5,17 +5,24 @@ view: superstore {
   ## This data is from a phone marketing campaign of a superstore.
   ## https://www.kaggle.com/datasets/ahsan81/superstore-marketing-campaign-dataset
 
-  dimension: id {
-    description: "Unique identifier of each customer."
-    primary_key: yes
+  dimension: age {
+    description: "Calculated age based off of yob of customer."
     type: number
-    sql: ${TABLE}.Id ;;
+    sql: extract(year from current_datetime()) - ${birth_year} ;;
   }
 
-  dimension: complaint {
+  dimension: birth_year {
+    description: "The year of birth of the customer."
+    type: number
+    sql: ${TABLE}.Year_Birth ;;
+    hidden: yes
+  }
+
+  dimension: complain {
     description: "If a customer has ever complained in the last 2 years this column shows a 1."
-    type: yesno
+    type: number
     sql: ${TABLE}.Complain ;;
+    hidden: yes
   }
 
   dimension_group: customer_enrollment {
@@ -31,6 +38,19 @@ view: superstore {
     description: "Highest degree of education of the customer."
     type: string
     sql: ${TABLE}.Education ;;
+  }
+
+  dimension: has_complained {
+    description: "Yes/No field to replace base table field."
+    type: yesno
+    sql: If(${complain} = 1,true ,false);;
+  }
+
+  dimension: id {
+    description: "Unique identifier of each customer."
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.Id ;;
   }
 
   dimension: income {
@@ -133,16 +153,23 @@ view: superstore {
     sql: ${TABLE}.NumWebVisitsMonth ;;
   }
 
+  dimension: previous_campaign {
+    description: "Whether or not the customer had accepted the offer in the previous campaign (1 if yes, 0 if no)."
+    type: number
+    sql: ${TABLE}.Response ;;
+    hidden: yes
+  }
+
+  dimension: previous_campaign_response {
+    description: "Yes/No field based off of the base field from the table."
+    type: yesno
+    sql: if(${previous_campaign} = 1, true, false) ;;
+  }
+
   dimension: since_last_purchase {
     description: "The number of days since the last purchase."
     type: number
     sql: ${TABLE}.Recency ;;
-  }
-
-  dimension: previous_campaign_response {
-    description: "Whether or not the customer had accepted the offer in the previous campaign (1 if yes, 0 if no)."
-    type: number
-    sql: ${TABLE}.Response ;;
   }
 
   dimension: teenhome {
@@ -151,10 +178,79 @@ view: superstore {
     sql: ${TABLE}.Teenhome ;;
   }
 
-  dimension: age {
-    description: "The current year minus the field for year of birth of the customer."
-    type: number
-    sql: extract_year(now()) - ${TABLE}.Year_Birth ;;
+
+  ## Measures ##
+
+  measure: catalog_purchases {
+    description: "The number of purchases a customer has made through the catalog."
+    type: sum
+    sql: ${TABLE}.NumCatalogPurchases ;;
+  }
+
+  # measure: count {
+  #   type: count
+  #   drill_fields: [id]
+  # }
+
+  measure: deals_purchases {
+    description: "The number of purchases with a discount a customer has made."
+    type: sum
+    sql: ${TABLE}.NumDealsPurchases ;;
+  }
+
+  measure: fish_products {
+    description: "The total amount spent on fish products over the last 2 years."
+    type: sum
+    sql: ${TABLE}.MntFishProducts ;;
+    value_format_name: usd
+  }
+
+  measure: fruits {
+    description: "The total amount spent on fruit products over the last 2 years"
+    type: sum
+    sql: ${TABLE}.MntFruits ;;
+    value_format_name: usd
+  }
+
+  measure: gold_prods {
+    description: "The total amount spent on Gold (member exclusive deals) products over the last 2 years."
+    type: sum
+    sql: ${TABLE}.MntGoldProds ;;
+    value_format_name: usd
+  }
+
+  measure: meat_products {
+    description: "The total amount spent on meat products over the last 2 years."
+    type: sum
+    sql: ${TABLE}.MntMeatProducts ;;
+    value_format_name: usd
+  }
+
+  measure: store_purchases {
+    description: "The number of purchases a customer has made in the physical store."
+    type: sum
+    sql: ${TABLE}.NumStorePurchases ;;
+  }
+
+  measure: sweet_products {
+    description: "The total amount spent on sweet products over the last 2 years."
+    type: sum
+    sql: ${TABLE}.MntSweetProducts ;;
+    value_format_name: usd
+  }
+
+  measure: total_purchases {
+    description: "The total number of purchases a customer has made."
+    type: sum
+    sql: (${TABLE}.NumDealsPurchases + ${TABLE}.NumCatalogPurchases + ${TABLE}.NumStorePurchases + ${TABLE}.NumWebPurchases) ;;
+    value_format_name: usd
+  }
+
+  measure: total_spend_amount {
+    description: "The total amount a customer has spent over the last two years"
+    type: sum
+    sql: ${TABLE}.MntWines + ${TABLE}.MntSweetProducts + ${TABLE}.MntGoldProds + ${TABLE}.MntFruits + ${TABLE}.MntFishProducts + ${TABLE}.MntMeatProducts;;
+    value_format_name: usd
   }
 
   measure: web_visits_month {
@@ -169,74 +265,11 @@ view: superstore {
     sql: ${TABLE}.NumWebPurchases ;;
   }
 
-  measure: store_purchases {
-    description: "The number of purchases a customer has made in the physical store."
-    type: sum
-    sql: ${TABLE}.NumStorePurchases ;;
-  }
-  measure: catalog_purchases {
-    description: "The number of purchases a customer has made through the catalog."
-    type: sum
-    sql: ${TABLE}.NumCatalogPurchases ;;
-  }
-
-  measure: deals_purchases {
-    description: "The number of purchases with a discount a customer has made."
-    type: sum
-    sql: ${TABLE}.NumDealsPurchases ;;
-  }
-
-  measure: total_purchases {
-    description: "The total number of purchases a customer has made."
-    type: sum
-    sql: (${TABLE}.NumDealsPurchases + ${TABLE}.NumCatalogPurchases + ${TABLE}.NumStorePurchases + ${TABLE}.NumWebPurchases) ;;
-  }
-
-  measure: fish_products {
-    description: "The total amount spent on fish products over the last 2 years."
-    type: sum
-    sql: ${TABLE}.MntFishProducts ;;
-  }
-
-  measure: fruits {
-    description: "The total amount spent on fruit products over the last 2 years"
-    type: sum
-    sql: ${TABLE}.MntFruits ;;
-  }
-
-  measure: gold_prods {
-    description: "The total amount spent on Gold (member exclusive deals) products over the last 2 years."
-    type: sum
-    sql: ${TABLE}.MntGoldProds ;;
-  }
-
-  measure: meat_products {
-    description: "The total amount spent on meat products over the last 2 years."
-    type: sum
-    sql: ${TABLE}.MntMeatProducts ;;
-  }
-
-  measure: sweet_products {
-    description: "The total amount spent on sweet products over the last 2 years."
-    type: sum
-    sql: ${TABLE}.MntSweetProducts ;;
-  }
-
   measure: wines {
     description: "The total amount spent on wine products over the last 2 years."
     type: sum
     sql: ${TABLE}.MntWines ;;
-  }
-
-  measure: total_spend_amount {
-    description: "The total amount a customer has spent over the last two years"
-    type: sum
-    sql: ${TABLE}.MntWines + ${TABLE}.MntSweetProducts + ${TABLE}.MntGoldProds + ${TABLE}.MntFruits + ${TABLE}.MntFishProducts + ${TABLE}.MntMeatProducts;;
     value_format_name: usd
   }
 
-  measure: count {
-    type: count
-    drill_fields: [id]
-  }
 }
