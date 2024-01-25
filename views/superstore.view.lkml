@@ -158,6 +158,11 @@ view: superstore {
     type: sum
     sql: ${TABLE}.NumDealsPurchases ;;
   }
+
+  measure: total_purchases {
+    type: sum
+    sql: ${TABLE}.NumDealsPurchases + ${TABLE}.NumCatalogPurchases+${TABLE}.NumStorePurchases+${TABLE}.NumWebPurchases
+  }
  measure: fish_products {
     type: sum
     sql: ${TABLE}.MntFishProducts ;;
@@ -186,6 +191,12 @@ view: superstore {
   measure: wines {
     type: sum
     sql: ${TABLE}.MntWines ;;
+  }
+
+  measure: total_spend_amount {
+    type: sum
+    sql: ${TABLE}.MntWines + ${TABLE}.MntSweetProducts+${TABLE}.MntGoldProds+${TABLE}.MntFruits +${TABLE}.MntFishProducts+${TABLE}.MntMeatProducts;;
+    value_format_name: usd
   }
 
   measure: count {
