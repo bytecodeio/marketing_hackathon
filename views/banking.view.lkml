@@ -17,7 +17,7 @@ view: banking {
   }
 
   dimension: contact_type {
-    description: "Type of communication"
+    description: "Type of communication with customer."
     type: string
     sql: ${TABLE}.contact ;;
   }
