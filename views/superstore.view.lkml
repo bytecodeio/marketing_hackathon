@@ -236,6 +236,7 @@ view: superstore {
     description: "Rate of acceptance of previous campaign"
     type: number
     sql: ${total_customers_accepted}/${total_customers} ;;
+    value_format: "0.00%"
   }
 
   measure: store_purchases {
