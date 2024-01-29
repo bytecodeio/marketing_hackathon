@@ -1,7 +1,7 @@
 
 view: superstore {
   sql_table_name: `bytecode-marketing-analytics.superstore_marketing.superstore` ;;
-  drill_fields: [id]
+  drill_fields: [customer_id]
   ## This data is from a phone marketing campaign of a superstore.
   ## https://www.kaggle.com/datasets/ahsan81/superstore-marketing-campaign-dataset
 
@@ -34,6 +34,13 @@ view: superstore {
     sql: ${TABLE}.Dt_Customer ;;
   }
 
+  dimension: customer_id {
+    description: "Unique identifier of each customer."
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.Id ;;
+  }
+
   dimension: education {
     description: "Highest degree of education of the customer."
     type: string
@@ -44,13 +51,6 @@ view: superstore {
     description: "Yes/No field to replace base table field."
     type: yesno
     sql: If(${complain} = 1,true ,false);;
-  }
-
-  dimension: id {
-    description: "Unique identifier of each customer."
-    primary_key: yes
-    type: number
-    sql: ${TABLE}.Id ;;
   }
 
   dimension: income {
@@ -180,16 +180,22 @@ view: superstore {
 
   ## Measures ##
 
+  measure: avg_age {
+    description: "Average age of customer base"
+    type: average
+    sql: ${age} ;;
+  }
+
   measure: catalog_purchases {
     description: "The number of purchases a customer has made through the catalog."
     type: sum
     sql: ${TABLE}.NumCatalogPurchases ;;
   }
 
-  # measure: count {
-  #   type: count
-  #   drill_fields: [id]
-  # }
+  measure: count {
+    type: count
+    drill_fields: [customer_id]
+  }
 
   measure: deals_purchases {
     description: "The number of purchases with a discount a customer has made."
@@ -197,28 +203,28 @@ view: superstore {
     sql: ${TABLE}.NumDealsPurchases ;;
   }
 
-  measure: fish_products {
+  measure: fish_spend {
     description: "The total amount spent on fish products over the last 2 years."
     type: sum
     sql: ${TABLE}.MntFishProducts ;;
     value_format_name: usd
   }
 
-  measure: fruits {
+  measure: fruits_spend {
     description: "The total amount spent on fruit products over the last 2 years"
     type: sum
     sql: ${TABLE}.MntFruits ;;
     value_format_name: usd
   }
 
-  measure: gold_prods {
+  measure: gold_spend {
     description: "The total amount spent on Gold (member exclusive deals) products over the last 2 years."
     type: sum
     sql: ${TABLE}.MntGoldProds ;;
     value_format_name: usd
   }
 
-  measure: meat_products {
+  measure: meat_spend {
     description: "The total amount spent on meat products over the last 2 years."
     type: sum
     sql: ${TABLE}.MntMeatProducts ;;
@@ -231,18 +237,17 @@ view: superstore {
     sql: ${TABLE}.NumStorePurchases ;;
   }
 
-  measure: sweet_products {
+  measure: sweet_spend {
     description: "The total amount spent on sweet products over the last 2 years."
     type: sum
     sql: ${TABLE}.MntSweetProducts ;;
     value_format_name: usd
   }
 
-  measure: total_purchases {
+  measure: total_num_purchases {
     description: "The total number of purchases a customer has made."
     type: sum
     sql: (${TABLE}.NumDealsPurchases + ${TABLE}.NumCatalogPurchases + ${TABLE}.NumStorePurchases + ${TABLE}.NumWebPurchases) ;;
-    value_format_name: usd
   }
 
   measure: total_spend_amount {
@@ -264,7 +269,7 @@ view: superstore {
     sql: ${TABLE}.NumWebPurchases ;;
   }
 
-  measure: wines {
+  measure: wines_spend {
     description: "The total amount spent on wine products over the last 2 years."
     type: sum
     sql: ${TABLE}.MntWines ;;
