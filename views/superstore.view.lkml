@@ -184,6 +184,7 @@ view: superstore {
     description: "Average age of customer base"
     type: average
     sql: ${age} ;;
+    value_format: "#"
   }
 
   measure: catalog_purchases {
@@ -231,6 +232,12 @@ view: superstore {
     value_format_name: usd
   }
 
+  measure: previous_response_acceptance_rate {
+    description: "Rate of acceptance of previous campaign"
+    type: number
+    sql: ${total_customers_accepted}/${total_customers} ;;
+  }
+
   measure: store_purchases {
     description: "The number of purchases a customer has made in the physical store."
     type: sum
@@ -242,6 +249,24 @@ view: superstore {
     type: sum
     sql: ${TABLE}.MntSweetProducts ;;
     value_format_name: usd
+  }
+
+  measure: total_customers {
+    description: "The total count of customers."
+    type: count_distinct
+    sql: ${customer_id} ;;
+  }
+
+  measure: total_customers_accepted {
+    type: count_distinct
+    sql: ${customer_id} ;;
+    filters: [previous_campaign_response: "yes"]
+  }
+
+  measure: total_customers_declined {
+    type: count_distinct
+    sql: ${customer_id} ;;
+    filters: [previous_campaign_response: "no"]
   }
 
   measure: total_num_purchases {
