@@ -63,7 +63,7 @@ view: superstore {
   dimension: income_bucket {
     description: "The bucket of income customer belongs to."
     type: tier
-    tiers: [0,50000,80000,110000]
+    tiers: [0,30000,45000,60000,75000,90000,105000]
     style: relational
     sql: ${income} ;;
     value_format_name: usd
